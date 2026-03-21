@@ -110,10 +110,6 @@ Then start your client in the same shell session.
 
 ### Step 3. Install the Tampermonkey Script
 
-If your mitmweb is **not** running on `localhost:8081` or `localhost:9091`, you must manually add a user matching rule in the Tampermonkey script, for example:
-
-<img height="695" alt="add user matching rule" src="https://github.com/user-attachments/assets/2cd441cd-1218-4389-9951-48006f81fa89" />
-
 
 
 #### From GreasyFork (Recommended)
@@ -129,6 +125,13 @@ Download from the release page and install it manually.
 
 1. Install the Tampermonkey script  
 2. Open mitmweb in your browser  
+
+#### Add user match rules (if needed)
+If your mitmweb is **not** running on `localhost:8081` or `localhost:9091`, you must manually add a user matching rule in the Tampermonkey script, for example:
+
+<img height="695" alt="add user matching rule" src="https://github.com/user-attachments/assets/2cd441cd-1218-4389-9951-48006f81fa89" />
+
+
 
 ---
 
