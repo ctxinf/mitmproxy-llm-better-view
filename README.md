@@ -110,11 +110,11 @@ Then start your client in the same shell session.
 
 ### Step 3. Install the Tampermonkey Script
 
-If your mitmweb is **not** running on `localhost:8081` or `localhost:9091`, you must manually add a matching rule in the Tampermonkey script, for example:
+If your mitmweb is **not** running on `localhost:8081` or `localhost:9091`, you must manually add a user matching rule in the Tampermonkey script, for example:
 
-```js
-// @match  http://127.0.0.1:8081/*
-```
+<img height="695" alt="add user matching rule" src="https://github.com/user-attachments/assets/2cd441cd-1218-4389-9951-48006f81fa89" />
+
+
 
 #### From GreasyFork (Recommended)
 
