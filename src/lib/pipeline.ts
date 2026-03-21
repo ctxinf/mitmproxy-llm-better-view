@@ -2,15 +2,18 @@ import { unsafeWindow } from '$';
 import { CallAction, Flow } from '../types/flow';
 // import { logger } from './logtape';
 
-
-
 export type HookFunc = (type: 'request' | 'response', text: any, flow: Flow) => DocumentFragment | HTMLElement | null | void;
+type Dispose = () => void;
 
 const originalFetch = (typeof unsafeWindow !== 'undefined' ? unsafeWindow : window).fetch;
 // 统一使用 `location.origin`，避免把 schema 写死为 `http://`（mitmweb 也可能是 https）。
 const flowApiBaseUrl = location.origin;
+let activeListenerDispose: Dispose | null = null;
 
-export function initRouteListener(hook: HookFunc) {
+export function initRouteListener(hook: HookFunc): Dispose {
+  // Step 1: prevent stacked listeners from repeated init calls.
+  activeListenerDispose?.();
+
   // 处理单个 flow action 的逻辑
   const handleFlowAction = async ({ uuid, action }: CallAction) => {
     const flow = await getFlow(uuid);
@@ -30,7 +33,18 @@ export function initRouteListener(hook: HookFunc) {
   }
 
   // 监听 URL 变化
-  listenUrlChange(handleFlowAction);
+  // Step 2: attach URL listeners and keep a disposer.
+  const stopListening = listenUrlChange(handleFlowAction);
+
+  const dispose = () => {
+    // Step 3: restore history methods and remove popstate listener.
+    stopListening();
+    if (activeListenerDispose === dispose) {
+      activeListenerDispose = null;
+    }
+  };
+  activeListenerDispose = dispose;
+  return dispose;
 }
 
 function extractFlowInfo(url: string): CallAction | null {
@@ -44,7 +58,7 @@ function extractFlowInfo(url: string): CallAction | null {
   return null;
 }
 
-function listenUrlChange(hook?: (flow: CallAction) => void) {
+function listenUrlChange(hook?: (flow: CallAction) => void): Dispose {
   let currentUrl = location.href;
 
   function onUrlChange() {
@@ -70,6 +84,12 @@ function listenUrlChange(hook?: (flow: CallAction) => void) {
   };
 
   window.addEventListener('popstate', onUrlChange);
+
+  return () => {
+    history.pushState = originalPushState;
+    history.replaceState = originalReplaceState;
+    window.removeEventListener('popstate', onUrlChange);
+  };
 }
 
 function getFlow(uuid: string): Promise<Flow | null> {

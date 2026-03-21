@@ -31,7 +31,7 @@ const dashboardData = computed(() => dataAsText.value ?? '');
 
 <template>
   <details 
-    id="mitmproxy-llm-better-view-dash-container" 
+    data-panel-root="mitmproxy-llm-better-view-dashboard"
     class="llm-better-view" 
     open
     :style="`--llm-subject-color: ${subjectColor}`"

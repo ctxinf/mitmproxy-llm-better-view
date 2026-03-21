@@ -1,6 +1,6 @@
 import { toast } from "vue-sonner";
 import { logger } from "./lib/logtape";
-import { initPageInjector } from "./lib/page-injector";
+import { destroyPageInjector, initPageInjector } from "./lib/page-injector";
 import { HookFunc, initRouteListener } from "./lib/pipeline";
 import { isAnthropicReq, isAnthropicRes, isGeminiReq, isGeminiRes, isOpenAIReq, isOpenAIRes, isOpenAIResponsesReq, isOpenAIResponsesRes, isSSE } from "./llm/judge";
 import { useCurrentFlowStore } from "./store/llm";
@@ -8,9 +8,11 @@ import type { ApiStandard, DataType } from "./types/flow";
 
 import DashboardGate from './pages/DashboardGate.vue';
 
+type Dispose = () => void;
 
 export function useEntry() {
   const { setLLMData, setUnknownLLMData } = useCurrentFlowStore();
+  let activeDispose: Dispose | null = null;
 
   // Hook function for processing LLM requests/responses
   const handleLLMData: HookFunc = (type, flowData, flow) => {
@@ -18,11 +20,9 @@ export function useEntry() {
     try {
       let standard: ApiStandard | null = null;
       let dataType: DataType | null = null;
-      const dataAsText = flowData.text
-      // Parse the response data
-      // const data = parseResponseData(dataAsText);
-      // logger.debug`dataTExt: ${dataAsText}`
-      // Detect platform and view type
+      const dataAsText = flowData.text;
+
+      // Detect platform and view type.
       // Responses API 优先识别，避免被 chat/completions 逻辑吞掉。
       if (isOpenAIResponsesReq(type, dataAsText, flow)) {
         standard = 'openai-response';
@@ -92,14 +92,26 @@ export function useEntry() {
       toast('Error processing request');
     }
 
-    // Return null to not modify the original response
+    // Keep original mitmweb response panel untouched.
     return null;
   };
 
   // Initialize route listener
   return {
-    init: () => initRouteListener(handleLLMData)
-  }
+    init: () => {
+      // Step 1: cleanup previous runtime hooks before re-init.
+      activeDispose?.();
 
+      // Step 2: attach route listener.
+      const disposeRouteListener = initRouteListener(handleLLMData);
 
+      // Step 3: return one unified cleanup function for caller.
+      activeDispose = () => {
+        disposeRouteListener();
+        destroyPageInjector();
+        activeDispose = null;
+      };
+      return activeDispose;
+    }
+  };
 }

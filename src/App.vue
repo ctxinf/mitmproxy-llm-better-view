@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, shallowRef, type Component } from 'vue';
+import { computed, onMounted, onUnmounted, ref, shallowRef, type Component } from 'vue';
 import { Toaster } from 'vue-sonner';
 import 'vue-sonner/style.css';
 import { useEntry } from './entry';
@@ -9,6 +9,7 @@ const isDev = computed(()=> import.meta.env.DEV && showDebug.value);
 
 const DebugHome = shallowRef<Component>();
 const {init}=useEntry();
+let disposeEntry: (() => void) | null = null;
 // 动态导入debug页面 - 生产构建时此代码不会执行, 因为isDev为false
 // 使用动态import确保debug页面代码被正确分割
 async function toggleDebug() {
@@ -24,8 +25,15 @@ async function toggleDebug() {
 
 
 onMounted(() => {
-  init()
+  // Step 1: initialize URL listener + panel injection runtime.
+  disposeEntry = init()
 })
+
+onUnmounted(() => {
+  // Step 2: release listeners and injected Vue app lifecycle.
+  disposeEntry?.();
+  disposeEntry = null;
+});
 
 </script>
 
