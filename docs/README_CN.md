@@ -105,11 +105,6 @@ export NO_PROXY=localhost,127.0.0.1
 
 ### 步骤 3. 安装 Tampermonkey 脚本
 
-如果你的 mitmweb **没有** 运行在 `localhost:8081` 或 `localhost:9091`，你必须在 Tampermonkey 脚本中手动添加匹配规则，例如：
-
-```js
-// @match  http://127.0.0.1:8081/*
-```
 
 #### 从 GreasyFork 安装（推荐）
 
@@ -125,7 +120,14 @@ https://greasyfork.org/scripts/540917-mitmproxy-llm-better-view
 1. 安装 Tampermonkey 脚本  
 2. 在浏览器中打开 mitmweb  
 
+#### 添加url匹配规则
+如果你的 mitmweb **没有** 运行在 `localhost:8081` 或 `localhost:9091`，你必须在 Tampermonkey 脚本的设置中手动添加用户匹配规则，例如：
+
+<img height="695" alt="add user matching rule" src="https://github.com/user-attachments/assets/2cd441cd-1218-4389-9951-48006f81fa89" />
+
+
 ---
+
 
 ### 步骤 4. 使用和查看
 
