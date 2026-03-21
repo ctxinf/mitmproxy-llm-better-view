@@ -167,4 +167,4 @@ https://greasyfork.org/scripts/540917-mitmproxy-llm-better-view
 
 - [mitmproxy](https://mitmproxy.org/) - 一个交互式的支持 TLS 拦截的 HTTP 代理
 - [Tampermonkey](https://www.tampermonkey.net/) - 世界上最流行的用户脚本管理器
-- 如果你不想安装 tampermonkey 脚本，你也可以使用这个在线可视化请求/响应：[ai-api-visualizer](https://github.com/slow-groovin/ai-api-visualizer)
+- 如果你不想安装 tampermonkey 脚本，你也可以使用这个在线可视化请求/响应：[ai-api-visualizer](https://github.com/ctxinf/ai-api-visualizer)

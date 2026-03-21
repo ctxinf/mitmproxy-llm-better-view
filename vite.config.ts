@@ -25,9 +25,9 @@ export default defineConfig({
           '': 'LLM(openai, gemini, claude) API Request/Response Visualization in mitmweb.',
           'zh-CN': 'mitmweb中 可视化大模型(openai, gemini, claude)请求/响应内容 '
         },
-        homepage: 'https://github.com/slow-groovin/mitmproxy-llm-better-view',
-        updateURL: 'https://github.com/slow-groovin/mitmproxy-llm-better-view/releases/latest/download/dist-latest.js',
-        downloadURL: 'https://github.com/slow-groovin/mitmproxy-llm-better-view/releases/latest/download/dist-latest.js',
+        homepage: 'https://github.com/ctxinf/mitmproxy-llm-better-view',
+        updateURL: 'https://github.com/ctxinf/mitmproxy-llm-better-view/releases/latest/download/dist-latest.js',
+        downloadURL: 'https://github.com/ctxinf/mitmproxy-llm-better-view/releases/latest/download/dist-latest.js',
         namespace: 'npm/vite-plugin-monkey',
         match: [
           'http://localhost:8081/*',

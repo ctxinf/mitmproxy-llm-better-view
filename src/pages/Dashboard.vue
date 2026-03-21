@@ -46,7 +46,7 @@ const dashboardData = computed(() => dataAsText.value ?? '');
 
       </div>
       <div style="flex:1"></div>
-      <a href="https://github.com/slow-groovin/mitmproxy-llm-better-view" target="_blank" rel="noopener noreferrer" class="github-link"
+      <a href="https://github.com/ctxinf/mitmproxy-llm-better-view" target="_blank" rel="noopener noreferrer" class="github-link"
         aria-label="View mitmproxy-llm-better-view on GitHub">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
           <path fill-rule="evenodd"

@@ -178,4 +178,4 @@ This is developed and tested based on the author's usage patterns. It may not co
 
 - [mitmproxy](https://mitmproxy.org/) - An interactive TLS-capable intercepting HTTP proxy
 - [Tampermonkey](https://www.tampermonkey.net/) - The world's most popular userscript manager
-- If you do not want to install the tampermonkey script, you can also use this to visualize req/res online: [ai-api-visualizer](https://github.com/slow-groovin/ai-api-visualizer)
+- If you do not want to install the tampermonkey script, you can also use this to visualize req/res online: [ai-api-visualizer](https://github.com/ctxinf/ai-api-visualizer)
