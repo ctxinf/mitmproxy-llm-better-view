@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { marked } from 'marked';
+import { Marked } from 'marked';
+import { escapeHtmlLiteral, unknownTagLiteralExtensions } from '@/utils/format/markdownUnknownTagExtension';
 
 interface Props {
   content: string;
@@ -16,24 +17,26 @@ defineEmits<{
   'update:content': [value: string];
 }>();
 
+// 使用独立 marked 实例，避免污染全局配置。
+const markdownParser = new Marked({
+  breaks: true,
+  gfm: true
+});
+
+markdownParser.use({
+  extensions: unknownTagLiteralExtensions
+});
+
 // 响应式生成 HTML 内容
 const htmlContent = computed(() => {
   if (!props.content) return '';
 
   try {
-    // 实例化 Renderer (marked 现代版本的标准做法)
-    const renderer = new marked.Renderer();
-    
-    // 直接解析 Markdown
-    return marked.parse(props.content, { 
-      renderer,
-      async: false, // 确保同步返回字符串
-      breaks: true,  // 支持回车换行
-      gfm: true      // 启用 GitHub 风格的 Markdown
-    }) as string;
+    // 使用 extension 在词法阶段把未知标签转为文本 token。
+    return markdownParser.parse(props.content, { async: false });
   } catch (e) {
     console.error('Markdown parsing error:', e);
-    return props.content;
+    return escapeHtmlLiteral(props.content);
   }
 });
 </script>
@@ -144,4 +147,12 @@ const htmlContent = computed(() => {
 :deep(th) {
   background: #f9fafb;
 }
+
+/* unknown 标签高亮：复用 XMLViewer 语义色彩。 */
+:deep(.xv-tag) { color: #22863a; font-weight: 600; }
+:deep(.xv-bracket) { color: #6f42c1; }
+:deep(.xv-attr-name) { color: #005cc5; }
+:deep(.xv-attr-value) { color: #032f62; }
+:deep(.xv-equals) { color: #24292e; }
+:deep(.xv-comment) { color: #6a737d; font-style: italic; }
 </style>

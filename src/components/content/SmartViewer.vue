@@ -83,7 +83,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue';
-import { useResizeObserver } from '@vueuse/core';
+import { useResizeObserver, useSessionStorage } from '@vueuse/core';
 // 组件引入保持不变...
 import ProseContent from '@/components/content/ProseContent.vue';
 import XMLViewer from '@/components/content/XMLViewer.vue';
@@ -94,6 +94,7 @@ import CopyButton from '@/components/common/CopyButton.vue';
 import WrapLineButton from '@/components/common/WrapLineButton.vue';
 import ExpandButton from '@/components/common/ExpandButton.vue';
 import { detectContentFormat, type ContentFormat } from '@/utils/format/formatContent';
+import { hashId } from '@/utils/id/hashId';
 
 interface Props {
   id?: string;
@@ -107,8 +108,25 @@ const props = defineProps<Props>();
 const visible = ref(false);
 const showRaw = ref(false);
 const wrapLines = ref(true);
-const manualFormat = ref<ContentFormat | null>(null);
 const showButtons = ref(false);
+
+const contentFormats: ContentFormat[] = ['markdown', 'json', 'xml', 'text'];
+const isContentFormat = (value: unknown): value is ContentFormat =>
+  typeof value === 'string' && contentFormats.includes(value as ContentFormat);
+
+const formatStorageKey = computed(() => {
+  const keyId = props.id?.trim() ? props.id.trim() : `hash-${hashId(props.text)}`;
+  return `llm-better-view-smart-format-${keyId}`;
+});
+
+// 内容块维度记忆格式切换：同一会话下回到该块时恢复用户手动选择。
+const manualFormatStorage = useSessionStorage<ContentFormat | null>(formatStorageKey, null);
+const manualFormat = computed<ContentFormat | null>({
+  get: () => (isContentFormat(manualFormatStorage.value) ? manualFormatStorage.value : null),
+  set: (value) => {
+    manualFormatStorage.value = value;
+  }
+});
 
 type IdleWindow = Window & {
   requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => number;
